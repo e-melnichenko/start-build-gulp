@@ -1,0 +1,57 @@
+.visually-hidden {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+
+  white-space: nowrap;
+
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+
+.shim-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  background-color: rgba(0, 0, 0, 0.6);
+
+  transform: translateY(-100%);
+  overflow: auto;
+  
+  &--active {
+    transform: none;
+
+    .modal-outter-wrap {
+      transform: none;
+    }
+  }
+}
+
+.modal-outter-wrap {
+  display: flex;
+  min-height: 100%;
+  width: 100%;      
+
+  transform: translateY(-100%);
+  transition: transform 0.5s;
+}
+
+@media(min-width: 768px) {
+  .modal-outter-wrap {
+    align-items: center;
+    justify-content: center;
+    // минимальная ширина экрана, при которой модальное окно перестает уменьшаться и центроваться. 
+    // Также появляется горизонтальная прокрутка. Модальные окна большего размера будут уменьшатся.
+    // Удалить, если такое поведение не нужно.
+    // min-width: 860px; 
+  }
+}
+
