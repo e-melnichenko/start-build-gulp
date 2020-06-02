@@ -13,6 +13,15 @@
   overflow: hidden;
 }
 
+.list-unstyled {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  padding: 0 25px;
+}
 
 .shim-container {
   position: fixed;
@@ -44,14 +53,26 @@
   transition: transform 0.5s;
 }
 
-@media(min-width: 768px) {
+
+
+@media(min-width: $tablet-width) {
+  .container {
+    padding: 0 40px;
+  }
   .modal-outter-wrap {
     align-items: center;
     justify-content: center;
     // минимальная ширина экрана, при которой модальное окно перестает уменьшаться и центроваться. 
     // Также появляется горизонтальная прокрутка. Модальные окна большего размера будут уменьшатся.
-    // Удалить, если такое поведение не нужно.
+    // Удалить, если такое поведение не нужно. Если не нужно поддерживать ie, то использовать fit-content
     // min-width: 860px; 
+  }
+}
+
+@media(min-width: $desktop-width) {
+  .container {
+    width: 1320px;
+    padding: 0 60px;
   }
 }
 

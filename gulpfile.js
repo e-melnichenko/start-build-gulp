@@ -164,7 +164,7 @@ gulp.task('images:opt', function() {
   )
 });
 
-gulp.task('clean:styles:image', function() {
+gulp.task('images:clean:opt', function() {
   return del(['src/styles/**/*-opt.{png,svg,jpg,jpeg}', 'src/assets/img/**/*-opt.{png,svg,jpg,jpeg}'])
 });
 
@@ -175,7 +175,7 @@ gulp.task('assets:images', function() {
     $.if(!isDevelopment, $.rev()),
     gulp.dest('public'),
     $.if(!isDevelopment, combine(
-      $.rev.manifest('html-image.json'),
+      $.rev.manifest('html-images.json'),
       gulp.dest('manifest')
     )))
 });
@@ -187,7 +187,7 @@ gulp.task('webp', function() {
 });
 
 gulp.task('sprite', function() {
-  return gulp.src("tmp/img/icons/*.svg")
+  return gulp.src("tmp/icons/*.svg")
   .pipe($.svgstore({
     inlineSvg: true
   }))
@@ -196,14 +196,19 @@ gulp.task('sprite', function() {
 });
 
 gulp.task('copy:js', function() {
-  return gulp.src('src/js/ie/**/*.js')
+  return gulp.src(['src/js/**/*.js', '!src/js/main.js'])
     .pipe(gulp.dest('public/js'))
-})
+});
 
 gulp.task('copy:fonts', function() {
   return gulp.src('src/styles/sass-common/**/*.{woff,woff2}')
     .pipe(gulp.dest('public/styles'))
-})
+});
+
+gulp.task('pixel-glass', function() {
+  return gulp.src('tmp/pixel-glass/**/*.*')
+    .pipe(gulp.dest('public/pixel-glass'))
+});
 
 gulp.task('build', gulp.series(
   gulp.parallel(gulp.series('styles:assets', 'styles'), 'webpack', 'assets:images', 'copy:js', 'copy:fonts'),
@@ -214,7 +219,7 @@ gulp.task('watch', function() {
   gulp.watch('src/assets/**/*.html', gulp.series('html'));
   gulp.watch('src/assets/img/**/*.{png,svg,jpeg,jpg,webp}', gulp.series('assets:images'));
   gulp.watch('src/styles/**/*.scss', gulp.series('styles'));
-  gulp.watch('src/styles/**/*.{png,svg,jpeg,jpg}', gulp.series('styles:assets'));
+  gulp.watch('src/styles/**/*.{png,svg,jpeg,jpg}', gulp.series('styles:images'));
 });
 
 gulp.task('server', function() {
@@ -224,6 +229,6 @@ gulp.task('server', function() {
   });
 });
 
-gulp.task('dev', gulp.series('build', gulp.parallel('watch', 'server')));
+gulp.task('dev', gulp.series('build', 'pixel-glass', gulp.parallel('watch', 'server')));
 
 gulp.task('prod', gulp.series('clean', 'build'));
