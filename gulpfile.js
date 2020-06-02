@@ -23,17 +23,17 @@ gulp.task('styles', function() {
     const filePath = path.join(path.dirname(_), url);
     const content = fs.readFileSync(filePath).toString();
     // находим   и заменяем url изображения
-    const regexp = /(?<=^\s*background(-image)?:\s+url\(['"]).+(?=['"])/mg;
+    const regexp = /(?<=url\(['"]).+?(?=['"])/g;
 
-    const result = content.replace(regexp, function (imgUrl) {
-      const newImgUrl = path.posix.join(path.dirname(url), imgUrl);
+    const result = content.replace(regexp, function (oldUrl) {
+      const newUrl = path.posix.join(path.dirname(url), oldUrl);
   
       if (isDevelopment)
-        return newImgUrl;
+        return newUrl;
   
       const manifest = JSON.parse(fs.readFileSync(manifestPath));
   
-      return manifest[newImgUrl];
+      return manifest[newUrl];
     })
   
     done({
@@ -60,7 +60,7 @@ gulp.task('styles', function() {
 
 gulp.task('styles:assets', function() {
   return combine(
-    gulp.src('src/styles/**/*.{png,jpg,jpeg}', {since: gulp.lastRun('styles:assets')}),
+    gulp.src('src/styles/**/*.{png,jpg,jpeg,svg}', {since: gulp.lastRun('styles:assets')}),
     $.newer('public/styles'),
     $.if(!isDevelopment, $.rev()),
     gulp.dest('public/styles'),
@@ -86,7 +86,7 @@ gulp.task('html', function() {
         manifest: gulp.src('manifest/webpack.json', {allowEmpty: true})
       }),
       $.revReplace({
-        manifest: gulp.src('manifest/html-image.json', {allowEmpty: true})
+        manifest: gulp.src('manifest/html-images.json', {allowEmpty: true})
       }),
       $.htmlmin({collapseWhitespace: true}),
     )),
@@ -136,7 +136,7 @@ gulp.task('webpack', function(callback) {
   }
 
   return combine(
-    gulp.src('src/js/main.js'),  // return можно убрать, так как мы вызываем callback.      
+    gulp.src('src/js/main.js'),            // return можно убрать, так как мы вызываем callback.      
     webpackStream(options, null, done),    //  Однако может подвиснуть если первая сборка завершилась с ошибкой, так как не сработает on data
     gulp.dest(function(file) {
       return file.basename === 'webpack.json' ? './manifest' : 'public/js'
@@ -149,33 +149,23 @@ gulp.task('webpack', function(callback) {
 
 gulp.task('images:opt', function() {
   return combine(
-    gulp.src(['tmp/img/**/*.{png,svg,jpg,jpeg}', '!tmp/img/icons/**/*.*']),
+    gulp.src(['src/styles/**/*.{png,svg,jpg,jpeg}', 'src/assets/img/**/*.{png,svg,jpg,jpeg}']),
     imagemin([
       imagemin.optipng({optimizationLevel: 3}),
-      imagemin.mozjpeg({quality: 85, progressive: true}),
-      imagemin.svgo()
-    ]),
-    gulp.dest('src/assets/img'),
-  )
-});
-
-gulp.task('images:opt:styles', function() {
-  return combine(
-    gulp.src('src/styles/**/*.{png,svg,jpg,jpeg}'),
-    imagemin([
-      imagemin.optipng({optimizationLevel: 3}),
-      imagemin.mozjpeg({quality: 85, progressive: true}),
+      imagemin.mozjpeg({quality: 95, progressive: true}),
       imagemin.svgo()
     ]),
     $.rename(function(path) {
       path.basename += "-opt";
     }),
-    gulp.dest('src/styles')
+    gulp.dest(function(file) {
+      return file.base === path.resolve('src/styles') ? 'src/styles' : 'src/assets/img'
+    })
   )
 });
 
 gulp.task('clean:styles:image', function() {
-  return del('src/styles/**/*-opt.{png,svg,jpg,jpeg}')
+  return del(['src/styles/**/*-opt.{png,svg,jpg,jpeg}', 'src/assets/img/**/*-opt.{png,svg,jpg,jpeg}'])
 });
 
 gulp.task('assets:images', function() {
