@@ -15,7 +15,7 @@
           </svg>  
     `svg4everybody.js` для поддержки ie уже подключен в `index.html`.
 
-4. `npm start` для разработки или `npm run build` для продакшн сборки. Happy hacking! :-) 
+4. `npm start` для разработки или `npm run build` для продакшн сборки (на macOS/Linux в `package.json` замените `"build": "set NODE_ENV=production && gulp prod"` на `"build": "NODE_ENV=production gulp prod"`). Happy hacking! :-) 
 
 
 ## Тонкие моменты  
