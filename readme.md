@@ -1,12 +1,15 @@
-# Сборка
 
-## Getting started
+
+# Getting started
 
     npm install
+    npm start
+
+# Сборка
 
 1. В папку *src/assets/img* переместить изображения для html. svg для спрайта поместить в *tmp/icons*.
 
-2. `gulp webp` - добавляет формат webp. `picturefill.js` для поддержки ie уже добавлен в `index.html`.
+2. `gulp webp` - добавляет формат webp. `picturefill.js` для поддержки ie уже добавлен в `main.js`.
 
 3. `gulp sprite` - генерирует спрайт. Имя файла становится id: 
 
@@ -15,7 +18,9 @@
           </svg>  
     `svg4everybody.js` для поддержки ie уже подключен в `index.html`.
 
-4. `npm start` для разработки или `npm run build` для продакшн сборки (на macOS/Linux в `package.json` замените `"build": "set NODE_ENV=production && gulp prod"` на `"build": "NODE_ENV=production gulp prod"`). Happy hacking! :-) 
+4. `npm start` для разработки или `npm run build` для продакшн сборки (на macOS/Linux в `package.json` замените `"build": "set NODE_ENV=production && gulp prod"` на `"build": "NODE_ENV=production gulp prod"`).
+
+5. Для сравнения с макетом используется pixel-glass. Поестить изображения в папку `tmp/pixel-glass/preview` и отредактировать `<head>`. 
 
 
 ## Тонкие моменты  
@@ -24,7 +29,7 @@
 Изображения для стилей хранятся в папках блоков. Функция `resolver` указывает правильные пути для изображений при импорте и проверяет хеширование. Чтобы задача `styles` имела доступ к файлу манифеста, `styles:assets` должна быть уже выполнена.  
 
 ### js
-Для сигнализации завершения первой сборки используется вызов *callback*. Иначе webpack watch подвешивает сборку. Gulp watch в данной ситуации менее эффективен. Для чанков, динамических импортов и тд требуется настройка публичных путей.  
+Для сигнализации завершения первой сборки используется вызов callback. Иначе webpack watch подвешивает сборку. Gulp watch в данной ситуации менее эффективен. Для чанков, динамических импортов и тд требуется настройка публичных путей. В  main.js  добавлен полифил для метода  closest  в ie11.   
 
 ### html
 Должны быть завершены задачи `style`, `webpack` и `assets:images` для чтения имен файлов из манифеста.
