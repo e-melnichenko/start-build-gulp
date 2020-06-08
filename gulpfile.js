@@ -20,6 +20,15 @@ gulp.task('styles', function() {
   const manifestPath = './manifest/assets-styles.json';
 
   function resolver(url, _, done) {
+    // шрифты копируются отдельно. Можно менять на свой вкус - главное не забыть поправить copy:fonts 
+    if(path.basename(url) === 'fonts.scss') {
+      done({
+        file: url
+      })
+
+      return
+    }
+
     const filePath = path.join(path.dirname(_), url);
     const content = fs.readFileSync(filePath).toString();
     // находим   и заменяем url изображения
@@ -58,17 +67,17 @@ gulp.task('styles', function() {
   ).on('error', $.notify.onError({ title: 'styles' }))
 });
 
-gulp.task('styles:assets', function() {
+gulp.task('styles:images', function() {
   return combine(
-    gulp.src('src/styles/**/*.{png,jpg,jpeg,svg}', {since: gulp.lastRun('styles:assets')}),
+    gulp.src('src/styles/**/*.{png,jpg,jpeg,svg}', {since: gulp.lastRun('styles:images')}),
     $.newer('public/styles'),
     $.if(!isDevelopment, $.rev()),
     gulp.dest('public/styles'),
     $.if(!isDevelopment, combine(
-      $.rev.manifest('assets-styles.json'),
+      $.rev.manifest('css-images.json'),
       gulp.dest('manifest')
     ))
-  ).on('error', $.notify.onError({ title: 'styles:assets' }))
+  ).on('error', $.notify.onError({ title: 'styles:images' }))
 });
 
 gulp.task('clean', function() {
@@ -120,7 +129,7 @@ gulp.task('webpack', function(callback) {
           use: {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-env'],
+              babelrc: true
             }
           }
         }
@@ -153,7 +162,11 @@ gulp.task('images:opt', function() {
     imagemin([
       imagemin.optipng({optimizationLevel: 3}),
       imagemin.mozjpeg({quality: 95, progressive: true}),
-      imagemin.svgo()
+      imagemin.svgo({
+        plugins: [
+          {cleanupIDs: false}
+        ]
+      })
     ]),
     $.rename(function(path) {
       path.basename += "-opt";
@@ -182,7 +195,7 @@ gulp.task('assets:images', function() {
 
 gulp.task('webp', function() {
   return gulp.src('src/assets/img/**/*.{png,jpg,jpeg}')
-    .pipe($.webp({quality: 100}))
+    .pipe($.webp({quality: 95}))
     .pipe(gulp.dest('src/assets/img'))
 });
 
@@ -193,11 +206,6 @@ gulp.task('sprite', function() {
   }))
   .pipe($.rename("sprite.svg"))
   .pipe(gulp.dest("src/assets/img"));
-});
-
-gulp.task('copy:js', function() {
-  return gulp.src(['src/js/**/*.js', '!src/js/main.js'])
-    .pipe(gulp.dest('public/js'))
 });
 
 gulp.task('copy:fonts', function() {
@@ -211,7 +219,7 @@ gulp.task('pixel-glass', function() {
 });
 
 gulp.task('build', gulp.series(
-  gulp.parallel(gulp.series('styles:assets', 'styles'), 'webpack', 'assets:images', 'copy:js', 'copy:fonts'),
+  gulp.parallel(gulp.series('styles:images', 'styles'), 'webpack', 'assets:images', 'copy:fonts'),
   'html'
 ));
 
