@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./styles/style.css">
   <script src="./js/main.js" defer></script>
-  <script src="./js/ie/picturefill.js" async></script>
+  <!-- <script src="./js/ie/picturefill.js" async></script> -->
   <title>Document</title>
     <!-- Pixel Glass -->
 <style>
@@ -35,6 +35,13 @@
 <!-- // Pixel Glass -->
 </head>
 <body>
+<button data-open-modal  data-target="my-modal">show modal</button>
+<div class="modal" id="my-modal" data-modal>
+  <div class="modal__inner" id="my-modal">
+    <button data-close-modal>close</button>
+    <!-- content -->
+  </div>  
+</div>
   <script src="https://jonneal.dev/svg4everybody/svg4everybody.min.js"></script>
   <script>svg4everybody();</script>
 </body>

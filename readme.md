@@ -29,7 +29,7 @@
 Изображения для стилей хранятся в папках блоков. Функция `resolver` указывает правильные пути для изображений при импорте и проверяет хеширование. Чтобы задача `styles` имела доступ к файлу манифеста, `styles:assets` должна быть уже выполнена.  
 
 ### js
-Для сигнализации завершения первой сборки используется вызов callback. Иначе webpack watch подвешивает сборку. Gulp watch в данной ситуации менее эффективен. Для чанков, динамических импортов и тд требуется настройка публичных путей. В  main.js  добавлен полифил для метода  closest  в ie11.   
+Для сигнализации завершения первой сборки используется вызов callback. Иначе webpack watch подвешивает сборку. Gulp watch в данной ситуации менее эффективен. Для чанков, динамических импортов и тд требуется настройка публичных путей. В  main.js  добавлен полифил для метода  closest  в ie11.Для поддержки браузеров из browserslist нужно в файле `.babelrc` изменить `useBuiltIns` на `usage`.
 
 ### html
 Должны быть завершены задачи `style`, `webpack` и `assets:images` для чтения имен файлов из манифеста.
@@ -42,38 +42,12 @@
 
 # Модальное окно
 
-    <div class="shim-container shim-container--active">
-      <div class="modal-outter-wrap">
-        <div class="modal">
-          <p>text</p>
-          <button class="modal__button">bottom</button>
-        </div>
-      </div>
-    </div>  
+    <button data-open-modal  data-target="my-modal">show modal</button>
+    <div class="modal" id="my-modal" data-modal>
+        <div class="modal__inner" id="my-modal">
+            <button data-close-modal>close</button>
+            <!-- content -->
+        </div>  
+    </div>
 
-    .modal {
-        position: relative;
-        min-width: 100%;
-
-        background-color: lightsalmon;
-    }
-
-    .modal__button {
-        position: fixed;
-        bottom: 20px;
-        left: calc(50% - 40px);
-    }
-
-    @media (min-width: 768px) {
-        .modal {
-            min-width: auto;
-            width: 500px;
-            margin: 10px;
-        }
-
-        .modal__button {
-            position: static;
-        }
-    }
-
-На *body* повесить `overflow: hidden` и скомпенсировать полосу прокрутки.
+js и стили уже включены в сборку.

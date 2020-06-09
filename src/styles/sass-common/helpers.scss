@@ -20,58 +20,18 @@
 }
 
 .container {
+  margin: 0 auto;
   padding: 0 25px;
 }
-
-.shim-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  
-  background-color: rgba(0, 0, 0, 0.6);
-
-  transform: translateY(-100%);
-  overflow: auto;
-  
-  &--active {
-    transform: none;
-
-    .modal-outter-wrap {
-      transform: none;
-    }
-  }
-}
-
-.modal-outter-wrap {
-  display: flex;
-  min-height: 100%;
-  width: 100%;      
-
-  transform: translateY(-100%);
-  transition: transform 0.5s;
-}
-
-
 
 @media(min-width: $tablet-width) {
   .container {
     padding: 0 40px;
   }
-  .modal-outter-wrap {
-    align-items: center;
-    justify-content: center;
-    // минимальная ширина экрана, при которой модальное окно перестает уменьшаться и центроваться. 
-    // Также появляется горизонтальная прокрутка. Модальные окна большего размера будут уменьшатся.
-    // Удалить, если такое поведение не нужно. Если не нужно поддерживать ie, то использовать fit-content
-    // min-width: 860px; 
-  }
 }
 
 @media(min-width: $desktop-width) {
   .container {
-    width: 1320px;
     padding: 0 60px;
   }
 }

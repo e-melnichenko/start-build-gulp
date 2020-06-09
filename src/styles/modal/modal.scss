@@ -1,0 +1,57 @@
+.modal-show {
+  overflow: hidden;
+  
+  padding-right: var(--scroll-width); // js declarated. if ie11 - won't work
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  padding: 5px;
+
+  overflow: auto;
+  box-sizing: border-box;
+  transform: translateY(-100%);
+  transition: transform 0.5s;
+
+  &--active {
+    transform: none;
+  }
+}
+
+
+.modal__inner {
+  min-width: calc(100% - 10px);
+  min-height: calc(100% - 10px);
+  margin: auto;
+
+  background-color: #ffffff;
+}
+
+
+@media(min-width: $tablet-width) {
+  .modal-show::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .modal {
+    padding: 20px;
+  }
+
+  .modal__inner {
+    min-width: auto;
+    min-height: auto;
+  }
+}
