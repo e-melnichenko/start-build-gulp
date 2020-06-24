@@ -7,7 +7,7 @@
 
 # Сборка
 
-1. В папку *src/assets/img* переместить изображения для html. svg для спрайта поместить в *tmp/icons*.
+1. В папку *src/assets/img* переместить изображения для html. svg для спрайта поместить в *tmp/sprite-icons*.
 
 2. `gulp webp` - добавляет формат webp. `picturefill.js` для поддержки ie уже добавлен в `main.js`.
 
@@ -20,7 +20,7 @@
 
 4. `npm start` для разработки или `npm run build` для продакшн сборки (на macOS/Linux в `package.json` замените `"build": "set NODE_ENV=production && gulp prod"` на `"build": "NODE_ENV=production gulp prod"`).
 
-5. Для сравнения с макетом используется pixel-glass. Поестить изображения в папку `tmp/pixel-glass/preview` и отредактировать `<head>`. 
+5. Для сравнения с макетом используется pixel-glass. Поместить изображения в папку `tmp/preview` и отредактировать `<head>`. 
 
 
 ## Тонкие моменты  

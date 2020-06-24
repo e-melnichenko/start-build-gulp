@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./styles/style.css">
-  <script src="./js/main.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+  <script src="main.js" defer></script>
   <!-- <script src="./js/ie/picturefill.js" async></script> -->
   <title>Document</title>
     <!-- Pixel Glass -->
@@ -13,20 +13,20 @@
     background-repeat: no-repeat;
     background-position:  50% 0;
     /* Mobile layout by default */
-    background-image: url( "pixel-glass/preview/mobile.jpg" );
+    background-image: url( "pixel-glass/mobile.jpg" );
   }
   /* Tablet */
   @media ( min-width: 760px ) {
     HTML {
       /* Tablet layout */
-      background-image: url( "pixel-glass/preview/tablet.jpg" );
+      background-image: url( "pixel-glass/tablet.jpg" );
     }
   }
   /* Desktop */
   @media ( min-width: 960px ) {
     HTML {
       /* Desktop layout */
-      background-image: url( "pixel-glass/preview/desktop.jpg" );
+      background-image: url( "pixel-glass/desktop.jpg" );
     }
   }
 </style> 
@@ -35,13 +35,6 @@
 <!-- // Pixel Glass -->
 </head>
 <body>
-<button data-open-modal  data-target="my-modal">show modal</button>
-<div class="modal" id="my-modal" data-modal>
-  <div class="modal__inner" id="my-modal">
-    <button data-close-modal>close</button>
-    <!-- content -->
-  </div>  
-</div>
   <script src="https://jonneal.dev/svg4everybody/svg4everybody.min.js"></script>
   <script>svg4everybody();</script>
 </body>

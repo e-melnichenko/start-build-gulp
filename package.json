@@ -40,6 +40,7 @@
     "gulp-svgstore": "^7.0.1",
     "gulp-webp": "^4.0.1",
     "gulplog": "^1.0.0",
+    "pixel-glass": "^1.0.13",
     "stream-combiner2": "^1.1.1",
     "webpack-manifest-plugin": "^2.2.0",
     "webpack-stream": "^5.2.1"

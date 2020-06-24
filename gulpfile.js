@@ -17,37 +17,34 @@ const imagemin = require('gulp-imagemin');
 const isDevelopment = !process.env.NODE_ENV || !process.env.NODE_ENV === 'production';
 
 gulp.task('styles', function() {
-  const manifestPath = './manifest/assets-styles.json';
+  const manifestPath = './manifest/css-images.json';
 
-  function resolver(url, _, done) {
-    // шрифты копируются отдельно. Можно менять на свой вкус - главное не забыть поправить copy:fonts 
+  function resolver(url, prev, done) {
+    const filePath = path.join(path.dirname(prev), url);
+    const content = fs.readFileSync(filePath).toString();
+    // находим   и заменяем url
+    const regexp = /(?<=url\(['"]).+?(?=['"])/g;
+    //fonts
     if(path.basename(url) === 'fonts.scss') {
-      done({
-        file: url
+      const result = content.replace(regexp, function(fontUrl) {
+        return path.posix.join('fonts/', path.basename(fontUrl))
       })
-
+      done({ contents: result })
       return
     }
+    //images
+    const result = content.replace(regexp, function (imgUrl) {
+      let fileName = path.basename(imgUrl);
 
-    const filePath = path.join(path.dirname(_), url);
-    const content = fs.readFileSync(filePath).toString();
-    // находим   и заменяем url изображения
-    const regexp = /(?<=url\(['"]).+?(?=['"])/g;
+      if(!isDevelopment) {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath));
+        fileName = manifest[fileName];
+      }
 
-    const result = content.replace(regexp, function (oldUrl) {
-      const newUrl = path.posix.join(path.dirname(url), oldUrl);
-  
-      if (isDevelopment)
-        return newUrl;
-  
-      const manifest = JSON.parse(fs.readFileSync(manifestPath));
-  
-      return manifest[newUrl];
+      return path.posix.join('./img/styles', fileName);
     })
   
-    done({
-      contents: result
-    })
+    done({ contents: result })
   }
 
   return combine(
@@ -59,7 +56,7 @@ gulp.task('styles', function() {
       $.postcss([autoprefixer(), cssnano()]),
       $.rev()
     )),
-    gulp.dest('public/styles'),
+    gulp.dest('public'),
     $.if(!isDevelopment, combine(
       $.rev.manifest('styles.json'),
       gulp.dest('manifest')
@@ -69,13 +66,13 @@ gulp.task('styles', function() {
 
 gulp.task('styles:images', function() {
   return combine(
-    gulp.src('src/styles/**/*.{png,jpg,jpeg,svg}', {since: gulp.lastRun('styles:images')}),
-    $.newer('public/styles'),
+    gulp.src('src/styles/img/**/*.{png,jpg,jpeg,svg}', {since: gulp.lastRun('styles:images')}),
+    $.newer('public/img/styles'),
     $.if(!isDevelopment, $.rev()),
-    gulp.dest('public/styles'),
+    gulp.dest('public/img/styles'),
     $.if(!isDevelopment, combine(
       $.rev.manifest('css-images.json'),
-      gulp.dest('manifest')
+      gulp.dest('./manifest')
     ))
   ).on('error', $.notify.onError({ title: 'styles:images' }))
 });
@@ -148,7 +145,7 @@ gulp.task('webpack', function(callback) {
     gulp.src('src/js/main.js'),            // return можно убрать, так как мы вызываем callback.      
     webpackStream(options, null, done),    //  Однако может подвиснуть если первая сборка завершилась с ошибкой, так как не сработает on data
     gulp.dest(function(file) {
-      return file.basename === 'webpack.json' ? './manifest' : 'public/js'
+      return file.basename === 'webpack.json' ? 'manifest' : 'public/'
     })
     ).on('data', function() {
       if(firstBuildReady)
@@ -158,7 +155,7 @@ gulp.task('webpack', function(callback) {
 
 gulp.task('images:opt', function() {
   return combine(
-    gulp.src(['src/styles/**/*.{png,svg,jpg,jpeg}', 'src/assets/img/**/*.{png,svg,jpg,jpeg}']),
+    gulp.src(['src/styles/img/**/*.{png,svg,jpg,jpeg}', 'src/assets/img/**/*.{png,svg,jpg,jpeg}']),
     imagemin([
       imagemin.optipng({optimizationLevel: 3}),
       imagemin.mozjpeg({quality: 95, progressive: true}),
@@ -172,13 +169,13 @@ gulp.task('images:opt', function() {
       path.basename += "-opt";
     }),
     gulp.dest(function(file) {
-      return file.base === path.resolve('src/styles') ? 'src/styles' : 'src/assets/img'
+      return file.base === path.resolve('src/styles/img') ? 'src/styles/img' : 'src/assets/img'
     })
   )
 });
 
 gulp.task('images:clean:opt', function() {
-  return del(['src/styles/**/*-opt.{png,svg,jpg,jpeg}', 'src/assets/img/**/*-opt.{png,svg,jpg,jpeg}'])
+  return del(['src/styles/img/**/*-opt.{png,svg,jpg,jpeg}', 'src/assets/img/**/*-opt.{png,svg,jpg,jpeg}'])
 });
 
 gulp.task('assets:images', function() {
@@ -200,7 +197,7 @@ gulp.task('webp', function() {
 });
 
 gulp.task('sprite', function() {
-  return gulp.src("tmp/icons/*.svg")
+  return gulp.src("tmp/sprite-icons/*.svg")
   .pipe($.svgstore({
     inlineSvg: true
   }))
@@ -209,12 +206,12 @@ gulp.task('sprite', function() {
 });
 
 gulp.task('copy:fonts', function() {
-  return gulp.src('src/styles/sass-common/**/*.{woff,woff2}')
-    .pipe(gulp.dest('public/styles'))
+  return gulp.src('src/styles/fonts/**/*.{woff,woff2}', {base: 'src/styles'})
+    .pipe(gulp.dest('public'))
 });
 
 gulp.task('pixel-glass', function() {
-  return gulp.src('tmp/pixel-glass/**/*.*')
+  return gulp.src(['node_modules/pixel-glass/**/*.{js,css}', 'tmp/preview/**/*.*'])
     .pipe(gulp.dest('public/pixel-glass'))
 });
 
